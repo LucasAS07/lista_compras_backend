@@ -2,8 +2,6 @@ package io.lrsystem.appmercado.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
-
 @Entity
 public class ItemLista {
 
@@ -12,7 +10,7 @@ public class ItemLista {
     private Long sequencia;
 
     private Double quantidade;
-    private BigDecimal precoTotal;
+    private double precoTotal;
     private Integer concluido;
 
     @ManyToOne
@@ -39,11 +37,11 @@ public class ItemLista {
         this.quantidade = quantidade;
     }
 
-    public BigDecimal getPrecoTotal() {
+    public double getPrecoTotal() {
         return precoTotal;
     }
 
-    public void setPrecoTotal(BigDecimal precoTotal) {
+    public void setPrecoTotal(double precoTotal) {
         this.precoTotal = precoTotal;
     }
 

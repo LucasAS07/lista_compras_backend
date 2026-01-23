@@ -2,7 +2,6 @@ package io.lrsystem.appmercado.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class Lista {
     @Column(nullable = false)
     private LocalDate dataCriacao;
     private String nomeMercado;
-    private BigDecimal valorTotal;
+    private double valorTotal;
     private Integer status;
 
     @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL)
@@ -47,11 +46,11 @@ public class Lista {
         this.nomeMercado = nomeMercado;
     }
 
-    public BigDecimal getValorTotal() {
+    public double getValorTotal() {
         return valorTotal;
     }
 
-    public void setValorTotal(BigDecimal valorTotal) {
+    public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
     }
 

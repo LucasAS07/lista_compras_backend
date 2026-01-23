@@ -15,27 +15,25 @@ public class ProdutoServiceImpl implements ProdutoService{
 
     @Override
     public Produto criarNovoProduto(Produto produto) {
+        if(produto.getNome() == null || produto.getNome().length() == 0) {
+            return null;
+        }
         return produtoRepositorie.save(produto);
     }
 
     @Override
-    public Produto alterarProduto(Produto produto) {
-        return null;
-    }
-
-    @Override
     public List<Produto> listarTodos() {
-        return List.of();
+        return (List<Produto>)produtoRepositorie.findAll() ;
     }
 
     @Override
     public List<Produto> buscarPorPalavraChave(String key) {
-        return List.of();
+        return produtoRepositorie.findAllByNomeContaining(key);
     }
 
     @Override
     public Produto buscarPorId(Long id) {
-        return null;
+        return produtoRepositorie.findById(id).orElse(null);
     }
 
 

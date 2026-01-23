@@ -1,49 +1,88 @@
 package io.lrsystem.appmercado.service;
 
 import io.lrsystem.appmercado.model.Produto;
-import org.junit.jupiter.api.BeforeAll;
+import io.lrsystem.appmercado.repositorie.ProdutoRepositorie;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.ArrayList;
+import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")
 public class ProdutoTeste {
 
-    @Autowired
-    private static ProdutoService service;
+    @InjectMocks
+    private ProdutoServiceImpl produtoService;
 
-    private static Long idFound = 1L;
-    private static Long idNotFound = 100L;
-    private static Produto newProduct;
-    private static Produto createdProduct;
+    @Mock
+    private ProdutoRepositorie produtoRepositorie;
 
-    @BeforeAll
-    public static void setup(){
-        System.out.println("Configurando parametros de testes");
+    private Long existingId = 1L;
+    private Long nonExistingId = 100L;
+    private String keyword = "bolacha";
+    private Produto newProduct;
+    private Produto createdProduct;
+    private ArrayList<Produto> listaVariosProdutos;
+
+    @BeforeEach
+    public void setup() throws Exception {
         newProduct = new Produto();
-        newProduct.setNome("Feijão");
+        newProduct.setNome("bolacha");
 
         createdProduct = new Produto();
-        createdProduct.setNome("Arroz");
         createdProduct.setId(1L);
+        createdProduct.setNome("bolacha");
 
-//        service = Mockito.mock(ProdutoServiceImpl.class);
-//        Mockito.when(service.criarNovoProduto(newProduct)).thenReturn(new Produto());
-//        Mockito.when(service.buscarPorId(idFound)).thenReturn(createdProduct);
-//        Mockito.when(service.buscarPorId(idNotFound)).thenReturn(null);
-//        Mockito.when(service.buscarPorPalavraChave("a")).thenReturn(new ArrayList<Produto>());
-//        Mockito.when(service.listarTodos()).thenReturn(new ArrayList<Produto>());
-//        Mockito.when(service.alterarProduto(createdProduct)).thenReturn(createdProduct);
+        listaVariosProdutos = new ArrayList<Produto>();
+        Produto p1, p2;
+        p1 = new Produto();
+        p1.setId(1L);
+        p1.setNome("bolacha recheada");
+        p2 = new Produto();
+        p2.setId(3L);
+        p2.setNome("bolacha agua e sal");
+        listaVariosProdutos.add(p1);
+        listaVariosProdutos.add(p2);
 
+
+        Mockito.when(produtoRepositorie.save(newProduct)).thenReturn(createdProduct);
+        Mockito.when(produtoRepositorie.findById(existingId)).thenReturn(Optional.of(new Produto()));
+        Mockito.when(produtoRepositorie.findById(nonExistingId)).thenReturn(Optional.ofNullable(null));
+        Mockito.when(produtoRepositorie.findAllByNomeContaining("biscoito"))
+                .thenReturn(new ArrayList<Produto>());
+        Mockito.when(produtoRepositorie.findAllByNomeContaining(keyword)).thenReturn(listaVariosProdutos);
     }
 
-    @Test
-    public void shouldStoreAProduct() {
-        assertNotNull(service.criarNovoProduto(newProduct));
-    }
+   @Test
+    public void deveriaCadastrarProduto() {
+       Assertions.assertNotNull(produtoService.criarNovoProduto(newProduct));
+   }
+
+   @Test
+    public void deveriaRetornarPeloId() {
+       Assertions.assertNotNull(produtoService.buscarPorId(existingId));
+   }
+
+   @Test
+    public void deveriaNaoEncontrarId() {
+       Assertions.assertNull(produtoService.buscarPorId(nonExistingId));
+   }
+
+   @Test
+    public void deveriaRetornarListaComPalavraChave() {
+        Assertions.assertTrue(produtoService.buscarPorPalavraChave(keyword).size() > 0);
+   }
+
+   @Test
+    public void deceriaRetornarListaVazia() {
+        Assertions.assertTrue(produtoService.buscarPorPalavraChave("biscoito").size() == 0);
+   }
 
 }
